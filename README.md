@@ -1,5 +1,7 @@
 # 🧠 LearnMate AI – AI Study Assistant
 
+LearnMate is now structured as an end-to-end local big-data learning analytics platform with Spark batch processing, Spark structured streaming, a partitioned event lake, and AI study features.
+
 An offline AI Study Assistant that helps you learn better using:
 ✅ Summarizer (brief/detailed)
 ✅ Quiz generator (interactive with answers)
@@ -21,6 +23,47 @@ Rupesh Kumar (24BDS069)
 - RAG chatbot using FAISS + sentence-transformers
 
 
+## Architecture
+`App/User Events -> Logs + Raw Event Lake (+ optional Kafka) -> Spark Bronze -> Spark Silver -> Spark Gold -> Analytics Dashboard + Recommendations`
+
+
+## Core Big-Data Components
+
+- Partitioned raw event lake under `data/lakehouse/raw_events`
+- Spark batch pipeline over logs, event lake, and operational database
+- Spark structured streaming over file micro-batches or Kafka topics
+- Bronze / Silver / Gold outputs for metrics, engagement, and recommendation features
+- Gold-layer analytics surfaced in the application analytics flow
+
+## Main Folders
+
+- `data_ingestion/data_logger.py`
+- `data_ingestion/kafka_ingestion.py`
+- `batch_processing/big_data_pipeline.py`
+- `stream_processing/streaming_pipeline.py`
+- `analytics/analytics.py`
+- `database/database_manager.py`
+- `scripts/backfill_event_lake.py`
+- `scripts/run_big_data_pipeline.py`
+- `app.py`
+
+
+## Streaming Pipeline
+
+The streaming pipeline reads from:
+- Kafka when `KAFKA_ENABLED=true`
+- file micro-batches in `data/stream_input` otherwise
+
+## Notes
+
+This repository is still a local/single-machine implementation, but the architecture now supports:
+- large event ingestion patterns
+- Spark distributed-style processing
+- streaming ingestion
+- partitioned event-lake storage
+- analytics and recommendation outputs
+
+
 ## 📦 Model Instructions
 
 This app uses Mistral-7B GGUF model, which is not included in the repo.
@@ -39,10 +82,29 @@ Save the file to the `models/` directory like so:
 pip install -r requirements.txt
 streamlit run app.py
 
+## Backfill Historical Events
 
-PPT Presentation Link:
+```bash
+python scripts/backfill_event_lake.py --limit 5000
+```
+
+## Run Batch Pipeline
+
+```bash
+python scripts/run_big_data_pipeline.py --backfill-event-lake --show-report
+```
+
+
+
+PPT Presentation Link(Version 1):
 https://drive.google.com/file/d/14v8V_ELjbGtw8SIi1k8RyGSB2G7Z2ni4/view?usp=sharing
 
+PPT Presentation Link(Big Data - Version 2):
+https://drive.google.com/file/d/1shFCNXYtK6R9UA3wGFtXBurjiRaQK_qM/view?usp=sharing
 
-Report Link:
+
+Report Link(Version 1):
 https://drive.google.com/file/d/1XqeNYPe2E7v_cm-u8WcW5zXGeBVw-EqU/view?usp=sharing
+
+Report Link(Big Data - Version 2):
+https://drive.google.com/file/d/1zM98WD3NxyB8HjsST5-EYonfN-l9kKq8/view?usp=sharing
